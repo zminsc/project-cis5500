@@ -1,9 +1,9 @@
 {
-  "rds_host": "",
-  "rds_port": "",
-  "rds_user": "",
-  "rds_password": "",
-  "rds_db": "",
+  "rds_host": "db-group21.chnddfv6bvcb.us-east-1.rds.amazonaws.com",
+  "rds_port": "5432",
+  "rds_user": "group21",
+  "rds_password": "G21password!",
+  "rds_db": "project",
   "server_host": "localhost",
   "server_port": "8080"
 }

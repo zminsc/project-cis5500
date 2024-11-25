@@ -45,7 +45,7 @@ const most_recent = async function(req, res) {
     SELECT name, date_published 
     FROM recipes 
     ORDER BY date_published DESC 
-    LIMIT '${req.params.number_of_returns}';
+    LIMIT '${req.query.number_of_recents}';
     `, (err, data) => {
     if (err) {
       console.log(err);
@@ -66,7 +66,7 @@ const most_reviews = async function(req, res) {
     JOIN reviews re ON r.id = re.recipe_id 
     GROUP BY r.name 
     ORDER BY review_count DESC 
-    LIMIT '${req.params.number_reviews}';
+    LIMIT '${req.query.number_reviews}';
     `, (err, data) => {
     if (err) {
       console.log(err);
@@ -85,7 +85,7 @@ const recipe_prep_time = async function(req, res) {
   connection.query(`
     SELECT name, prep_time, cook_time 
     FROM recipes 
-    WHERE prep_time + cook_time <= '${req.params.cook_time}';
+    WHERE prep_time + cook_time <= '${req.query.cook_time}';
 
     `, (err, data) => {
     if (err) {
@@ -110,7 +110,7 @@ const avg_cal_category = async function(req, res) {
         SELECT n.calories
         FROM nutrition n
         JOIN recipes r ON n.recipe_id = r.id
-        WHERE r.category_id = (SELECT id FROM categories WHERE name = '${req.params.cat_name}')
+        WHERE r.category_id = (SELECT id FROM categories WHERE name = '${req.query.cat_name}')
     ) AS selected_recipes;
 
     `, (err, data) => {
@@ -137,7 +137,7 @@ const ingredients_category = async function(req, res) {
     WHERE EXISTS (
     SELECT 1
     FROM categories c
-    WHERE c.id = r.category_id AND c.name = '${req.params.cat_name}'
+    WHERE c.id = r.category_id AND c.name = '${req.query.cat_name}'
 );
 
     `, (err, data) => {
@@ -179,8 +179,8 @@ const recipes_protein = async function(req, res) {
 const recipe_specific = async function (req, res) {
   try {
      
-      const ingredients = req.params.ingredients
-          ? req.params.ingredients.split(',').map(ingredient => ingredient.trim())
+      const ingredients = req.query.ingredients
+          ? req.query.ingredients.split(',').map(ingredient => ingredient.trim())
           : [];
       
       if (!ingredients.length) {
@@ -235,7 +235,7 @@ const recipes_avg_rating = async function(req, res) {
     JOIN reviews re ON r.id = re.recipe_id 
     GROUP BY r.name 
     ORDER BY average_rating DESC 
-    LIMIT '${req.params.number_of_returns}';
+    LIMIT '${req.query.number_of_returns}';
 
     `, (err, data) => {
     if (err) {
@@ -273,7 +273,7 @@ const recipe_info_name = async function(req, res) {
   connection.query(`
     SELECT r.name, r.description, r.instructions, r.prep_time, r.cook_time, r.servings 
     FROM recipes r 
-    WHERE r.name = '${req.params.recipe_name}';
+    WHERE r.name = '${req.query.recipe_name}';
     `, (err, data) => {
     if (err) {
       console.log(err);

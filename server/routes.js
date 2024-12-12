@@ -103,16 +103,15 @@ const recipe_prep_time = async function(req, res) {
 
 //Route 4 - Find the average calories for a catagory recipes.
 const avg_cal_category = async function(req, res) {
-  //WE SHOUlD ROUND THE NUMBER
   connection.query(`
-    SELECT AVG(calories) AS average_calories
-    FROM (
-        SELECT n.calories
-        FROM nutrition n
-        JOIN recipes r ON n.recipe_id = r.id
-        WHERE r.category_id = (SELECT id FROM categories WHERE name = '${req.query.cat_name}')
-    ) AS selected_recipes;
-
+    WITH selected_recipes AS (
+      SELECT n.calories
+      FROM nutrition n
+      JOIN recipes r ON n.recipe_id = r.id
+      WHERE r.category_id = (SELECT id FROM categories WHERE name = '${req.query.cat_name}')
+    )
+    SELECT ROUND(AVG(calories), 2) AS average_calories
+    FROM selected_recipes;
     `, (err, data) => {
     if (err) {
       console.log(err);
@@ -130,16 +129,17 @@ const avg_cal_category = async function(req, res) {
 const ingredients_category = async function(req, res) {
   
   connection.query(`
-   SELECT DISTINCT i.name
+   WITH category_recipes AS (
+        SELECT r.id
+        FROM recipes r
+        JOIN categories c ON r.category_id = c.id
+        WHERE c.name = '${req.query.cat_name}'
+    )
+    SELECT i.name
     FROM ingredients i
     JOIN uses u ON i.id = u.ingredient_id
-    JOIN recipes r ON u.recipe_id = r.id
-    WHERE EXISTS (
-    SELECT 1
-    FROM categories c
-    WHERE c.id = r.category_id AND c.name = '${req.query.cat_name}'
-);
-
+    JOIN category_recipes cr ON u.recipe_id = cr.id;
+    GROUP BY i.name;
     `, (err, data) => {
     if (err) {
       console.log(err);
@@ -156,15 +156,15 @@ const ingredients_category = async function(req, res) {
 const recipes_protein = async function(req, res) {
   
   connection.query(`
-    SELECT name, protein_content
-    FROM (
+    WITH ranked_recipes AS (
         SELECT r.name, n.protein_content,
-              RANK() OVER (ORDER BY n.protein_content DESC) as rank
+               RANK() OVER (ORDER BY n.protein_content DESC) AS rank
         FROM recipes r
         JOIN nutrition n ON r.id = n.recipe_id
-    ) AS ranked_recipes
+    )
+    SELECT name, protein_content
+    FROM ranked_recipes
     WHERE rank <= 10;
-
     `, (err, data) => {
     if (err) {
       console.log(err);
@@ -180,29 +180,30 @@ const recipe_specific = async function (req, res) {
   try {
      
       const ingredients = req.query.ingredients
-          ? req.query.ingredients.split(',').map(ingredient => ingredient.trim())
-          : [];
+        ? req.query.ingredients.split(',').map(ingredient => ingredient.trim())
+        : [];
       
       if (!ingredients.length) {
-          return res.status(400).json({ error: 'No ingredients provided' });
+        return res.status(400).json({ error: 'No ingredients provided' });
       }
-
-  
-      const placeholders = ingredients
-          .map((_, index) => `$${index + 1}`)
-          .join(', ');
+      
+      const placeholders = ingredients.map((_, index) => `$${index + 1}`).join(', ');
       
       const query = `
-          SELECT r.name, COUNT(DISTINCT i.name) AS available_ingredients
+          WITH matched_ingredients AS (
+              SELECT r.id AS recipe_id, COUNT(DISTINCT i.name) AS matched_count
+              FROM recipes r
+              JOIN uses u ON r.id = u.recipe_id
+              JOIN ingredients i ON u.ingredient_id = i.id
+              WHERE i.name IN (${placeholders})
+              GROUP BY r.id
+          )
+          SELECT r.name, mi.matched_count AS available_ingredients
           FROM recipes r
-          JOIN uses u ON r.id = u.recipe_id
-          JOIN ingredients i ON u.ingredient_id = i.id
-          WHERE i.name IN (${placeholders})
-          GROUP BY r.name
-          HAVING COUNT(DISTINCT i.name) = $${ingredients.length + 1}
+          JOIN matched_ingredients mi ON r.id = mi.recipe_id
+          WHERE mi.matched_count = $${ingredients.length + 1}
       `;
       
-    
       connection.query(
           query,
           [...ingredients, ingredients.length],
@@ -230,11 +231,15 @@ const recipe_specific = async function (req, res) {
 const recipes_avg_rating = async function(req, res) {
   
   connection.query(`
-    SELECT r.name, AVG(re.rating) AS average_rating 
-    FROM recipes r 
-    JOIN reviews re ON r.id = re.recipe_id 
-    GROUP BY r.name 
-    ORDER BY average_rating DESC 
+    WITH recipe_ratings AS (
+        SELECT r.name, AVG(re.rating) AS average_rating
+        FROM recipes r
+        JOIN reviews re ON r.id = re.recipe_id
+        GROUP BY r.name
+    )
+    SELECT name, average_rating
+    FROM recipe_ratings
+    ORDER BY average_rating DESC
     LIMIT '${req.query.number_of_returns}';
 
     `, (err, data) => {
@@ -267,7 +272,7 @@ const recipe_count_category = async function(req, res) {
   });
 }
 
-//Route10 - Show detailed information for a specific recipe by name.
+//Route 10 - Show detailed information for a specific recipe by name.
 const recipe_info_name = async function(req, res) {
   
   connection.query(`
@@ -283,13 +288,6 @@ const recipe_info_name = async function(req, res) {
     }
   });
 }
-
-
-
-
-
-
-
 
 module.exports = {
   test,

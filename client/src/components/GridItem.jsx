@@ -1,22 +1,31 @@
-import {Link} from "@nextui-org/react";
+import { Link } from "@nextui-org/react";
 
-export default function GridItem({ recipeItem }) {
-    const imgClassName = `p-4 bg-[url(${recipeItem.url})] bg-cover bg-center flex-grow`
-
-    return (
-        <div className="w-64 h-64 rounded-xl overflow-hidden shadow-lg">
-            <div className="flex flex-col h-full">
-                <div
-                    className={imgClassName}
-                    style={{ flex: '4 1 0%' }}>
-                </div>
-                <div
-                    className="p-4 bg-white flex-grow"
-                    style={{ flex: '1 1 0%' }}>
-                    <h1 className={"font-bold text-xl"}>{recipeItem.name}</h1>
-                    <Link href={"#"} className={"text-sm underline-offset-2 underline text-customTertiary"}>View Recipe</Link>
-                </div>
+export default function GridItem({ recipeItem, onViewRecipe }) {
+  return (
+    <Link
+      onClick={() => onViewRecipe(recipeItem)}
+      className="block transform transition-all duration-300 hover:scale-105 hover:shadow-lg"
+    >
+      <div className="bg-white border border-gray-200 rounded-lg shadow-md">
+        <div className="p-4">
+          <h2 className="font-bold text-lg text-gray-900 mb-2 truncate">
+            {recipeItem.name}
+          </h2>
+          <div className="flex justify-between items-center mt-4">
+            <div className="text-sm text-gray-600">
+              {recipeItem.prepTime ? `Prep: ${recipeItem.prepTime}` : 'Prep: N/A'}
             </div>
+            <div className="text-sm text-gray-600">
+              {recipeItem.servings ? `Serves: ${recipeItem.servings}` : 'Servings: N/A'}
+            </div>
+          </div>
+          <div className="mt-4 flex justify-between items-center">
+            <span className="text-xs text-gray-500">
+              {recipeItem.difficulty || 'Difficulty: N/A'}
+            </span>
+          </div>
         </div>
-    );
+      </div>
+    </Link>
+  );
 }

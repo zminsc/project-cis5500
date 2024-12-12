@@ -1,50 +1,69 @@
-import {Button} from "@nextui-org/react";
-import GridItem from "../components/GridItem.jsx";
-import {useEffect, useState} from "react";
+import { useState, useEffect } from "react";
+import GridItem from "../components/GridItem";
+import RecipeView from "../components/RecipeView";
 
 export default function HomePage() {
-    const [recipes, setRecipes] = useState([]);
+  const [recipes, setRecipes] = useState([]);
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [showRecipeView, setShowRecipeView] = useState(false);
 
-    useEffect(() => {
-        const fetchRecipes = async () => {
-            try {
-                const response = await fetch('http://localhost:8080/most_recent/6');
-                const data = await response.json();
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/most_recent/9");
+        const data = await response.json();
 
-                // Create a Map using recipe ID as the key to ensure uniqueness
-                const uniqueRecipesMap = new Map(
-                    data.map(recipe => [recipe.id, recipe])
-                );
+        // Create a Map using recipe ID as the key to ensure uniqueness
+        const uniqueRecipesMap = new Map(
+          data.map((recipe) => [recipe.id, recipe])
+        );
 
-                // Convert Map values back to array
-                const uniqueRecipes = Array.from(uniqueRecipesMap.values());
+        // Convert Map values back to array
+        const uniqueRecipes = Array.from(uniqueRecipesMap.values());
 
-                console.log('Original data length:', data.length);
-                console.log('Unique recipes length:', uniqueRecipes.length);
+        console.log("Original data length:", data.length);
+        console.log("Unique recipes length:", uniqueRecipes.length);
 
-                setRecipes(uniqueRecipes);
-            } catch (error) {
-                console.error('Error fetching recipes:', error);
-            }
-        };
+        setRecipes(uniqueRecipes);
+      } catch (error) {
+        console.error("Error fetching recipes:", error);
+      }
+    };
 
-        fetchRecipes();
-    }, []);
+    fetchRecipes();
+  }, []);
 
-    // Log the current recipes state whenever it changes
-    useEffect(() => {
-        console.log('Current recipes in state:', recipes);
-    }, [recipes]);
+  // Log the current recipes state whenever it changes
+  useEffect(() => {
+    console.log("Current recipes in state:", recipes);
+  }, [recipes]);
 
-    return (
-        <div className="flex flex-col gap-y-5">
-            <h1 className={"text-2xl"}>Test</h1>
-            <div className="grid grid-cols-3 gap-y-10">
-                {recipes.map((recipe) => {
-                    console.log('Rendering recipe:', recipe.id, recipe.title);
-                    return <GridItem key={recipe.id} recipeItem={recipe} />;
-                })}
-            </div>
-        </div>
-    );
+  const handleViewRecipe = (recipe) => {
+    setSelectedRecipe(recipe);
+    setShowRecipeView(true);
+  };
+
+  const handleCloseRecipeView = () => {
+    setShowRecipeView(false);
+  };
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold text-gray-800 mb-6 text-left">
+        Recent Recipes
+      </h1>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-4">
+        {recipes.map((recipe) => (
+          <GridItem
+            key={recipe.id}
+            recipeItem={recipe}
+            onViewRecipe={handleViewRecipe}
+          />
+        ))}
+      </div>
+      {showRecipeView && (
+        <RecipeView recipe={selectedRecipe} onClose={handleCloseRecipeView} />
+      )}
+    </div>
+  );
 }

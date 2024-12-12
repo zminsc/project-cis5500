@@ -42,7 +42,7 @@ const test = async function(req, res) {
 const most_recent = async function(req, res) {
   
   connection.query(`
-    SELECT name, date_published 
+    SELECT name, date_published, cook_time, prep_time, servings, image_url
     FROM recipes 
     ORDER BY date_published DESC 
     LIMIT '${req.query.number_of_recents}';
@@ -61,7 +61,7 @@ const most_recent = async function(req, res) {
 const most_reviews = async function(req, res) {
   
   connection.query(`
-    SELECT r.name, COUNT(re.id) AS review_count 
+    SELECT r.name, COUNT(re.id) AS review_count, r.date_published, r.cook_time, r.prep_time, r.servings, r.image_url 
     FROM recipes r 
     JOIN reviews re ON r.id = re.recipe_id 
     GROUP BY r.name 
@@ -83,7 +83,7 @@ const most_reviews = async function(req, res) {
 const recipe_prep_time = async function(req, res) {
   
   connection.query(`
-    SELECT name, prep_time, cook_time 
+    SELECT name, date_published, cook_time, prep_time, servings, image_url 
     FROM recipes 
     WHERE prep_time + cook_time <= '${req.query.cook_time}';
 
@@ -101,7 +101,7 @@ const recipe_prep_time = async function(req, res) {
 
 
 
-//Route 4 - Find the average calories for a catagory recipes.
+//Route 4 - Find the average calories for a category's recipes.
 const avg_cal_category = async function(req, res) {
   connection.query(`
     WITH selected_recipes AS (
@@ -158,11 +158,12 @@ const recipes_protein = async function(req, res) {
   connection.query(`
     WITH ranked_recipes AS (
         SELECT r.name, n.protein_content,
-               RANK() OVER (ORDER BY n.protein_content DESC) AS rank
+               RANK() OVER (ORDER BY n.protein_content DESC) AS rank, r.date_published, 
+               r.cook_time, r.prep_time, r.servings, r.image_url 
         FROM recipes r
         JOIN nutrition n ON r.id = n.recipe_id
     )
-    SELECT name, protein_content
+    SELECT name, protein_content, date_published, cook_time, prep_time, servings, image_url 
     FROM ranked_recipes
     WHERE rank <= 10;
     `, (err, data) => {
@@ -198,7 +199,8 @@ const recipe_specific = async function (req, res) {
               WHERE i.name IN (${placeholders})
               GROUP BY r.id
           )
-          SELECT r.name, mi.matched_count AS available_ingredients
+          SELECT r.name, mi.matched_count AS available_ingredients, r.date_published, 
+              r.cook_time, r.prep_time, r.servings, r.image_url
           FROM recipes r
           JOIN matched_ingredients mi ON r.id = mi.recipe_id
           WHERE mi.matched_count = $${ingredients.length + 1}
@@ -232,12 +234,14 @@ const recipes_avg_rating = async function(req, res) {
   
   connection.query(`
     WITH recipe_ratings AS (
-        SELECT r.name, AVG(re.rating) AS average_rating
+        SELECT r.name, AVG(re.rating) AS average_rating, r.date_published, 
+              r.cook_time, r.prep_time, r.servings, r.image_url
         FROM recipes r
         JOIN reviews re ON r.id = re.recipe_id
         GROUP BY r.name
     )
-    SELECT name, average_rating
+    SELECT name, average_rating, date_published, 
+              cook_time, prep_time, servings, image_url
     FROM recipe_ratings
     ORDER BY average_rating DESC
     LIMIT '${req.query.number_of_returns}';
@@ -276,7 +280,7 @@ const recipe_count_category = async function(req, res) {
 const recipe_info_name = async function(req, res) {
   
   connection.query(`
-    SELECT r.name, r.description, r.instructions, r.prep_time, r.cook_time, r.servings 
+    SELECT r.name, r.description, r.instructions, r.prep_time, r.cook_time, r.servings, r.image_url 
     FROM recipes r 
     WHERE r.name = '${req.query.recipe_name}';
     `, (err, data) => {

@@ -103,11 +103,15 @@ const recipe_prep_time = async function(req, res) {
 
 const avg_cal_category = async function(req, res) {
   connection.query(`
-    WITH selected_recipes AS (
-      SELECT n.calories
-      FROM nutrition n
-      JOIN recipes r ON n.recipe_id = r.id
-      WHERE r.category_id = (SELECT id FROM categories WHERE name = '${req.query.cat_name}')
+    WITH filtered_recipes AS (
+        SELECT id
+        FROM recipes
+        WHERE category_id = (SELECT id FROM categories WHERE name = '${req.query.cat_name}')
+    ),
+    selected_recipes AS (
+        SELECT n.calories
+        FROM nutrition n
+        JOIN filtered_recipes fr ON n.recipe_id = fr.id
     )
     SELECT ROUND(AVG(calories), 2) AS average_calories
     FROM selected_recipes;

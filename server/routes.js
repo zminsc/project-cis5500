@@ -38,7 +38,8 @@ const test = async function(req, res) {
   });
 }
 
-//Route 1 - Find the ten most recent recipes
+//Route 1 - Find the X most recent recipes
+
 const most_recent = async function(req, res) {
   
   connection.query(`
@@ -56,7 +57,7 @@ const most_recent = async function(req, res) {
   });
 }
 
-//Route 2 - List recipes with the highest number of reviews.
+//Route 2 - List X recipes with the highest number of reviews.
 
 const most_reviews = async function(req, res) {
   
@@ -78,7 +79,7 @@ const most_reviews = async function(req, res) {
 }
 
 
-//Route 3 -  Get recipes that are quick to prepare and cook (under 30 minutes total).
+//Route 3 -  Get recipes that are quick to prepare and cook (under X minutes total).
 
 const recipe_prep_time = async function(req, res) {
   
@@ -98,10 +99,8 @@ const recipe_prep_time = async function(req, res) {
 }
 
 
-
-
-
 //Route 4 - Find the average calories for a category's recipes.
+
 const avg_cal_category = async function(req, res) {
   connection.query(`
     WITH selected_recipes AS (
@@ -122,10 +121,8 @@ const avg_cal_category = async function(req, res) {
   });
 }
 
-
-
-
 //Route 5 - List all ingredients used in gluten-free dinner recipes.
+
 const ingredients_category = async function(req, res) {
   
   connection.query(`
@@ -151,8 +148,8 @@ const ingredients_category = async function(req, res) {
 }
 
 
+//Route 6 - Find recipes with the highest protein content using a CTE and ranking function.
 
-//Route 6 - Find recipes with the highest protein content using window functions for ranking.
 const recipes_protein = async function(req, res) {
   
   connection.query(`
@@ -177,6 +174,7 @@ const recipes_protein = async function(req, res) {
 }
 
 //Route 7 - Show recipes that can be made with specific ingredients using a complex filter for availability of ingredients.
+
 const recipe_specific = async function (req, res) {
   try {
      
@@ -228,13 +226,13 @@ const recipe_specific = async function (req, res) {
 };
 
 
-//again we need to round down here
 //Route 8 - List recipes and their average rating, sorted by highest average.
+
 const recipes_avg_rating = async function(req, res) {
   
   connection.query(`
     WITH recipe_ratings AS (
-        SELECT r.name, AVG(re.rating) AS average_rating, r.date_published, 
+        SELECT r.name, ROUND(AVG(re.rating), 2) AS average_rating, r.date_published, 
               r.cook_time, r.prep_time, r.servings, r.image_url
         FROM recipes r
         JOIN reviews re ON r.id = re.recipe_id
@@ -256,9 +254,8 @@ const recipes_avg_rating = async function(req, res) {
   });
 }
 
-
-
 //Route 9 - Count recipes by category.
+
 const recipe_count_category = async function(req, res) {
   
   connection.query(`
@@ -277,6 +274,7 @@ const recipe_count_category = async function(req, res) {
 }
 
 //Route 10 - Show detailed information for a specific recipe by name.
+
 const recipe_info_name = async function(req, res) {
   
   connection.query(`

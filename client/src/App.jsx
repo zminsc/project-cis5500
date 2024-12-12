@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import './App.css'
-import {AvatarIcon, Button, Link, LinkIcon, Navbar, NavbarBrand, NavbarContent, NavbarItem} from "@nextui-org/react";
+import {Link, Navbar, NavbarBrand, NavbarContent, NavbarItem} from "@nextui-org/react";
 import logo from "./assets/logo.svg"
-import search from "./assets/search.svg"
 import HomePage from "./pages/home.jsx";
 import Container from "./components/Container.jsx";
 

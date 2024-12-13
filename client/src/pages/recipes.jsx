@@ -32,7 +32,7 @@ export default function RecipesPage() {
       name: "recipe_prep_time",
       label: "Recipes by Preparation Time",
       parameters: [
-        { name: "cook_time", type: "slider", label: "Maximum Cook Time (minutes)", min: 10, max: 120, step: 10, defaultValue: 30 }
+        { name: "cook_time", type: "slider", label: "Maximum Cook Time (minutes)", min: 1, max: 30, step: 11, defaultValue: 1 }
       ]
     },
     {

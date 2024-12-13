@@ -27,6 +27,11 @@ export default function CustomNavbar() {
                         Recipes
                     </Link>
                 </NavbarItem>
+                <NavbarItem isActive={location.pathname === "/stats"}>
+                    <Link className={"cursor-pointer"} color="foreground" onPress={() => navigate("/stats")}>
+                        Stats
+                    </Link>
+                </NavbarItem>
                 <NavbarItem isActive={location.pathname === "/about"}>
                     <Link className={"cursor-pointer"} color="foreground" onPress={() => navigate("/about")}>
                         About Us

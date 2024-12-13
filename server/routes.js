@@ -284,6 +284,26 @@ const recipe_info_name = async function(req, res) {
   });
 }
 
+const simplified_recipes = async function(req, res) {
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = parseInt(req.query.offset) || 0;
+
+  connection.query(`
+    SELECT *
+    FROM recipes
+    WHERE image_url IS NOT NULL
+    ORDER BY date_published DESC
+    LIMIT $1 OFFSET $2
+  `, [limit, offset], (err, data) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      res.json(data.rows);
+    }
+  });
+}
+
 module.exports = {
   test,
   most_recent,
@@ -296,4 +316,5 @@ module.exports = {
   recipes_avg_rating,
   recipe_count_category,
   recipe_info_name,
+  simplified_recipes
 }

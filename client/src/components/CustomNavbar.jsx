@@ -6,7 +6,7 @@ export default function CustomNavbar() {
     const location = useLocation();
 
     return (
-        <Navbar shouldHideOnScroll>
+        <Navbar shouldHideOnScroll={true}>
             <NavbarBrand className={"gap-2"}>
                 <img src={logo} alt="logo" />
                 <Link className={"font-bold text-customGreen"} href={"#"}>Recipedia</Link>

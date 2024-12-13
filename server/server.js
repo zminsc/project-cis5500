@@ -26,5 +26,6 @@ app.get('/recipe_specific/:ingredients', routes.recipe_specific); // Assumes que
 app.get('/recipes_avg_rating/:number_of_returns', routes.recipes_avg_rating);
 app.get('/recipe_count_category', routes.recipe_count_category); // Fixed handler reference
 app.get('/recipe_info_name/:recipe_name', routes.recipe_info_name); // Fixed handler reference
+app.get('/recipes/simplified', routes.simplified_recipes);
 
 module.exports = app;

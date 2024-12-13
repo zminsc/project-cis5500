@@ -21,7 +21,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="container mx-auto px-4 t-52">
+    <div className="container mx-auto my-8 px-4 t-52">
       <div className="flex flex-row justify-between">
         <div className="flex flex-col">
           <h1 className="text-3xl font-bold text-foreground">

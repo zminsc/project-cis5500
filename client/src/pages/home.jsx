@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import GridItem from "../components/GridItem";
 import { Button } from "@nextui-org/react";
+import {useNavigate} from "react-router-dom";
 
 export default function HomePage() {
   const [recipes, setRecipes] = useState();
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -18,7 +20,7 @@ export default function HomePage() {
     };
 
     fetchRecipes();
-  }, []);
+  }, [recipes]);
 
   return (
     <div className="container mx-auto my-8 px-4 t-52">
@@ -31,7 +33,7 @@ export default function HomePage() {
             Check out our most popular recipes of this week
           </a>
         </div>
-        <Button className="bg-customSecondary text-customPrimary">
+        <Button className="bg-customSecondary text-customPrimary" onPress={() => navigate("/recipes")}>
           See All
         </Button>
       </div>

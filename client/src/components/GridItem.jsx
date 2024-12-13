@@ -1,12 +1,7 @@
 import { Link } from '@nextui-org/react';
 import PropTypes from 'prop-types';
 import {useNavigate} from "react-router-dom";
-
-function getDifficulty(time) {
-  if (time < 30) return "Easy";
-  else if (time < 60) return "Medium";
-  else return "Hard"
-}
+import {getDifficulty} from "../utils.js";
 
 export default function GridItem({ recipeItem }) {
   GridItem.propTypes = {
@@ -58,7 +53,7 @@ export default function GridItem({ recipeItem }) {
         <h1 className="font-bold text-xl text-gray-900 truncate">{recipeItem.name}</h1>
           <Link
               className="text-customTertiary font-thin text-sm underline underline-offset-2 cursor-pointer"
-              onPress={() => navigate(`/recipe/${recipeItem.id}/${encodeURIComponent(recipeItem.name.toLowerCase().replace(/\s+/g, '-'))}`)}>
+              onPress={() => navigate(`/recipe/${encodeURIComponent(recipeItem.name.replace(/\s+/g, '_'))}`)}>
             View Recipe
           </Link>
         </div>

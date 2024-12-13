@@ -37,7 +37,7 @@ export default function HomePage() {
           See All
         </Button>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-8">
       {recipes && recipes.map((recipe) => (
           <GridItem
             key={recipe.id}

@@ -13,6 +13,7 @@ export default function RecipesPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+
   const availableRoutes = [
     {
       name: "most_recent",
@@ -110,6 +111,8 @@ export default function RecipesPage() {
           return [uniqueKey, recipe];
         })
       );
+
+      
 
       const uniqueRecipes = Array.from(uniqueRecipesMap.values());
 
@@ -234,9 +237,9 @@ export default function RecipesPage() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {recipes.map((recipe) => (
               <GridItem
-                key={recipe.id || recipe.name}
-                recipeItem={recipe}
-                onViewRecipe={handleViewRecipe}
+            key={recipe.id}
+            recipeItem={recipe}
+               
               />
             ))}
           </div>

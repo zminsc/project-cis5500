@@ -3,6 +3,7 @@ import logo from "../assets/logo.svg";
 import {useLocation} from "react-router-dom";
 
 export default function CustomNavbar() {
+    const location = useLocation();
 
     return (
         <Navbar shouldHideOnScroll>
@@ -19,11 +20,6 @@ export default function CustomNavbar() {
                 <NavbarItem isActive={location.pathname === "/recipes"}>
                     <Link color={"foreground"} href="/recipes">
                         Recipes
-                    </Link>
-                </NavbarItem>
-                <NavbarItem isActive={location.pathname === "/community"}>
-                    <Link color="foreground" href="/community">
-                        Community
                     </Link>
                 </NavbarItem>
                 <NavbarItem isActive={location.pathname === "/about"}>

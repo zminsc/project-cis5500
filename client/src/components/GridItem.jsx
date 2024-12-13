@@ -1,11 +1,18 @@
-import { Link } from "@nextui-org/react";
+import PropTypes from 'prop-types';
 
-export default function GridItem({ recipeItem, onViewRecipe }) {
+export default function GridItem({ recipeItem }) {
+  GridItem.propTypes = {
+    recipeItem: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      prep_time: PropTypes.number,
+      servings: PropTypes.number,
+      difficulty: PropTypes.string,
+    }).isRequired,
+  }
+
   return (
-    <Link
-      onClick={() => onViewRecipe(recipeItem)}
-      className="block transform transition-all duration-300 hover:scale-105 hover:shadow-lg"
-    >
+    <div
+      className="block transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
       <div className="bg-white border border-gray-200 rounded-lg shadow-md">
         <div className="p-4">
           <h2 className="font-bold text-lg text-gray-900 mb-2 truncate">
@@ -13,7 +20,7 @@ export default function GridItem({ recipeItem, onViewRecipe }) {
           </h2>
           <div className="flex justify-between items-center mt-4">
             <div className="text-sm text-gray-600">
-              {recipeItem.prepTime ? `Prep: ${recipeItem.prepTime}` : 'Prep: N/A'}
+              {recipeItem.prep_time ? `Prep Time: ${recipeItem.prep_time} mins` : 'Prep: N/A'}
             </div>
             <div className="text-sm text-gray-600">
               {recipeItem.servings ? `Serves: ${recipeItem.servings}` : 'Servings: N/A'}
@@ -26,6 +33,6 @@ export default function GridItem({ recipeItem, onViewRecipe }) {
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

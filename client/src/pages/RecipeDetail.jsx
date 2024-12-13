@@ -19,7 +19,7 @@ export default function RecipeDetail() {
     useEffect(() => {
         const fetchRecipes = async () => {
             try {
-                const response = await fetch("http://localhost:8080/recipe_info_name/" +
+                const response = await fetch("http://localhost:8080/recipe_info_name/?recipe_name=" +
                     encodeURIComponent(name).replace(/_/g, '%20').replace(/'/g, '%27'));
                 const data = await response.json();
                 setRecipe(data[0]);

@@ -133,7 +133,7 @@ export default function RecipeDetail() {
                             <Image
                                 alt={recipe.name}
                                 className="object-cover rounded-xl"
-                                src={recipe.image_url}
+                                src={recipe.image_url ?? ""}
                                 width="100%"
                             />
                         </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import GridItem from "../components/GridItem";
-import { Button } from "@nextui-org/react";
+import {Button, Spinner} from "@nextui-org/react";
 import {useNavigate} from "react-router-dom";
 
 export default function HomePage() {
@@ -43,7 +43,7 @@ export default function HomePage() {
             key={recipe.id}
             recipeItem={recipe}
           />
-        ))}
+        ))} : <div className="flex items-center justify-center h-screen"><Spinner color="warning"/></div>
       </div>
     </div>
   );

@@ -59,14 +59,13 @@ const most_recent = async function(req, res) {
 //Route 2 - List recipes with the highest number of reviews.
 
 const most_reviews = async function(req, res) {
-  
+  // review_counts is a materialized view
   connection.query(`
-    SELECT r.name, COUNT(re.id) AS review_count 
-    FROM recipes r 
-    JOIN reviews re ON r.id = re.recipe_id 
-    GROUP BY r.name 
-    ORDER BY review_count DESC 
-    LIMIT '${req.query.number_reviews}';
+    SELECT r.name, rc.review_count
+    FROM recipes r
+    JOIN review_counts rc ON r.id = rc.recipe_id
+    ORDER BY rc.review_count DESC
+    LIMIT ${req.query.number_reviews};
     `, (err, data) => {
     if (err) {
       console.log(err);
@@ -110,7 +109,7 @@ const avg_cal_category = async function(req, res) {
       JOIN recipes r ON n.recipe_id = r.id
       WHERE r.category_id = (SELECT id FROM categories WHERE name = '${req.query.cat_name}')
     )
-    SELECT ROUND(AVG(calories), 2) AS average_calories
+    SELECT ROUND(AVG(calories)::NUMERIC, 2) AS average_calories
     FROM selected_recipes;
     `, (err, data) => {
     if (err) {
@@ -156,15 +155,17 @@ const ingredients_category = async function(req, res) {
 const recipes_protein = async function(req, res) {
   
   connection.query(`
-    WITH ranked_recipes AS (
-        SELECT r.name, n.protein_content,
-               RANK() OVER (ORDER BY n.protein_content DESC) AS rank
-        FROM recipes r
-        JOIN nutrition n ON r.id = n.recipe_id
+    WITH top_protein_recipes AS (
+      SELECT 
+          r.name, 
+          n.protein_content
+      FROM recipes r
+      JOIN nutrition n ON r.id = n.recipe_id
+      ORDER BY n.protein_content DESC
+      LIMIT 10
     )
     SELECT name, protein_content
-    FROM ranked_recipes
-    WHERE rank <= 10;
+    FROM top_protein_recipes;
     `, (err, data) => {
     if (err) {
       console.log(err);
@@ -229,19 +230,12 @@ const recipe_specific = async function (req, res) {
 //again we need to round down here
 //Route 8 - List recipes and their average rating, sorted by highest average.
 const recipes_avg_rating = async function(req, res) {
-  
+  // avg_recipe_ratings is a materialized view
   connection.query(`
-    WITH recipe_ratings AS (
-        SELECT r.name, AVG(re.rating) AS average_rating
-        FROM recipes r
-        JOIN reviews re ON r.id = re.recipe_id
-        GROUP BY r.name
-    )
     SELECT name, average_rating
-    FROM recipe_ratings
+    FROM avg_recipe_ratings
     ORDER BY average_rating DESC
-    LIMIT '${req.query.number_of_returns}';
-
+    LIMIT 10;
     `, (err, data) => {
     if (err) {
       console.log(err);
@@ -261,7 +255,7 @@ const recipe_count_category = async function(req, res) {
     SELECT c.name, COUNT(r.id) AS recipe_count 
     FROM categories c 
     JOIN recipes r ON c.id = r.category_id 
-    GROUP BY c.name;
+    GROUP BY c.id, c.name;
     `, (err, data) => {
     if (err) {
       console.log(err);

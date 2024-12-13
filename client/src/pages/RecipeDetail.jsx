@@ -140,17 +140,6 @@ export default function RecipeDetail() {
                         </div>
                         <div className="space-y-4">
                             <div>
-                                <h2 className="text-xl font-semibold text-foreground mb-2">Ingredients</h2>
-                                <ul className="list-disc list-inside space-y-2">
-                                    {recipe.ingredients && recipe.ingredients.length > 0 ? recipe.ingredients?.map((ingredient, index) => (
-                                        <li key={index} className="text-gray-600">
-                                            {ingredient}
-                                        </li>
-                                    )) : "No ingredients available."}
-                                </ul>
-                            </div>
-                            <Divider/>
-                            <div>
                                 <h2 className="text-xl font-semibold text-foreground mb-2">Instructions</h2>
                                 <ol className="list-decimal list-inside space-y-2">
                                     {recipe.instructions ? recipe.instructions.split(". ").filter(instruction => instruction.trim()).map((instruction, index) => (

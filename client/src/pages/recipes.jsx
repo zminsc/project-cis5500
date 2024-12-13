@@ -28,6 +28,13 @@ const ROUTES = [
     ]
   },
   {
+    name: "recipe_prep_time",
+    label: "Quick Recipes",
+    parameters: [
+      { name: "cook_time", type: "slider", label: "Maximum Total Time (minutes)", min: 1, max: 120, step: 5, defaultValue: 30 }
+    ]
+  },
+  {
     name: "recipes_protein",
     label: "High Protein",
     parameters: []

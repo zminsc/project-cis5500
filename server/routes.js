@@ -38,11 +38,12 @@ const test = async function(req, res) {
   });
 }
 
-//Route 1 - Find the ten most recent recipes
+//Route 1 - Find the X most recent recipes
+
 const most_recent = async function(req, res) {
   
   connection.query(`
-    SELECT name, date_published 
+    SELECT name, date_published, cook_time, prep_time, servings, image_url
     FROM recipes 
     ORDER BY date_published DESC 
     LIMIT '${req.query.number_of_recents}';
@@ -56,12 +57,12 @@ const most_recent = async function(req, res) {
   });
 }
 
-//Route 2 - List recipes with the highest number of reviews.
+//Route 2 - List X recipes with the highest number of reviews.
 
 const most_reviews = async function(req, res) {
   // review_counts is a materialized view
   connection.query(`
-    SELECT r.name, rc.review_count
+    SELECT r.name, rc.review_count, r.date_published, r.cook_time, r.prep_time, r.servings, r.image_url
     FROM recipes r
     JOIN review_counts rc ON r.id = rc.recipe_id
     ORDER BY rc.review_count DESC
@@ -77,12 +78,12 @@ const most_reviews = async function(req, res) {
 }
 
 
-//Route 3 -  Get recipes that are quick to prepare and cook (under 30 minutes total).
+//Route 3 -  Get recipes that are quick to prepare and cook (under X minutes total).
 
 const recipe_prep_time = async function(req, res) {
   
   connection.query(`
-    SELECT name, prep_time, cook_time 
+    SELECT name, date_published, cook_time, prep_time, servings, image_url 
     FROM recipes 
     WHERE prep_time + cook_time <= '${req.query.cook_time}';
 
@@ -97,17 +98,19 @@ const recipe_prep_time = async function(req, res) {
 }
 
 
+//Route 4 - Find the average calories for a category's recipes.
 
-
-
-//Route 4 - Find the average calories for a catagory recipes.
 const avg_cal_category = async function(req, res) {
   connection.query(`
-    WITH selected_recipes AS (
-      SELECT n.calories
-      FROM nutrition n
-      JOIN recipes r ON n.recipe_id = r.id
-      WHERE r.category_id = (SELECT id FROM categories WHERE name = '${req.query.cat_name}')
+    WITH filtered_recipes AS (
+        SELECT id
+        FROM recipes
+        WHERE category_id = (SELECT id FROM categories WHERE name = '${req.query.cat_name}')
+    ),
+    selected_recipes AS (
+        SELECT n.calories
+        FROM nutrition n
+        JOIN filtered_recipes fr ON n.recipe_id = fr.id
     )
     SELECT ROUND(AVG(calories)::NUMERIC, 2) AS average_calories
     FROM selected_recipes;
@@ -121,10 +124,8 @@ const avg_cal_category = async function(req, res) {
   });
 }
 
-
-
-
 //Route 5 - List all ingredients used in gluten-free dinner recipes.
+
 const ingredients_category = async function(req, res) {
   
   connection.query(`
@@ -150,22 +151,19 @@ const ingredients_category = async function(req, res) {
 }
 
 
+//Route 6 - Find recipes with the highest protein content using a CTE and ranking function.
 
-//Route 6 - Find recipes with the highest protein content using window functions for ranking.
 const recipes_protein = async function(req, res) {
   
   connection.query(`
-    WITH top_protein_recipes AS (
-      SELECT 
-          r.name, 
-          n.protein_content
-      FROM recipes r
-      JOIN nutrition n ON r.id = n.recipe_id
-      ORDER BY n.protein_content DESC
-      LIMIT 10
-    )
-    SELECT name, protein_content
-    FROM top_protein_recipes;
+    SELECT 
+        r.name, 
+        n.protein_content, r.date_published, 
+              r.cook_time, r.prep_time, r.servings, r.image_url 
+    FROM recipes r
+    JOIN nutrition n ON r.id = n.recipe_id
+    ORDER BY n.protein_content DESC
+    LIMIT 10
     `, (err, data) => {
     if (err) {
       console.log(err);
@@ -177,6 +175,7 @@ const recipes_protein = async function(req, res) {
 }
 
 //Route 7 - Show recipes that can be made with specific ingredients using a complex filter for availability of ingredients.
+
 const recipe_specific = async function (req, res) {
   try {
      
@@ -199,7 +198,8 @@ const recipe_specific = async function (req, res) {
               WHERE i.name IN (${placeholders})
               GROUP BY r.id
           )
-          SELECT r.name, mi.matched_count AS available_ingredients
+          SELECT r.name, mi.matched_count AS available_ingredients, r.date_published, 
+              r.cook_time, r.prep_time, r.servings, r.image_url
           FROM recipes r
           JOIN matched_ingredients mi ON r.id = mi.recipe_id
           WHERE mi.matched_count = $${ingredients.length + 1}
@@ -227,15 +227,22 @@ const recipe_specific = async function (req, res) {
 };
 
 
-//again we need to round down here
 //Route 8 - List recipes and their average rating, sorted by highest average.
+
 const recipes_avg_rating = async function(req, res) {
   // avg_recipe_ratings is a materialized view
   connection.query(`
-    SELECT name, average_rating
-    FROM avg_recipe_ratings
+    SELECT 
+      r.name, 
+      ROUND(r.average_rating, 2),
+      r.date_published, 
+      r.cook_time, 
+      r.prep_time, 
+      r.servings, 
+      r.image_url
+    FROM avg_recipe_ratings r
     ORDER BY average_rating DESC
-    LIMIT 10;
+    LIMIT ${req.query.number_of_returns};
     `, (err, data) => {
     if (err) {
       console.log(err);
@@ -246,9 +253,8 @@ const recipes_avg_rating = async function(req, res) {
   });
 }
 
-
-
 //Route 9 - Count recipes by category.
+
 const recipe_count_category = async function(req, res) {
   
   connection.query(`
@@ -267,10 +273,11 @@ const recipe_count_category = async function(req, res) {
 }
 
 //Route 10 - Show detailed information for a specific recipe by name.
+
 const recipe_info_name = async function(req, res) {
   
   connection.query(`
-    SELECT r.name, r.description, r.instructions, r.prep_time, r.cook_time, r.servings 
+    SELECT r.name, r.description, r.instructions, r.prep_time, r.cook_time, r.servings, r.image_url 
     FROM recipes r 
     WHERE r.name = '${req.query.recipe_name}';
     `, (err, data) => {

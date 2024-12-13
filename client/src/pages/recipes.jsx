@@ -17,7 +17,7 @@ const ROUTES = [
     name: "most_recent",
     label: "Most Recent",
     parameters: [
-      { name: "number_of_returns", type: "slider", label: "Number of Recipes", min: 5, max: 50, step: 5, defaultValue: 10 }
+      { name: "number_of_recents", type: "slider", label: "Number of Recipes", min: 5, max: 50, step: 5, defaultValue: 10 }
     ]
   },
   {
@@ -25,13 +25,6 @@ const ROUTES = [
     label: "Most Reviewed",
     parameters: [
       { name: "number_reviews", type: "slider", label: "Number of Recipes", min: 5, max: 50, step: 5, defaultValue: 10 }
-    ]
-  },
-  {
-    name: "recipe_prep_time",
-    label: "Quick Recipes",
-    parameters: [
-      { name: "cook_time", type: "slider", label: "Maximum Cook Time (minutes)", min: 1, max: 120, step: 5, defaultValue: 30 }
     ]
   },
   {
@@ -68,13 +61,21 @@ export default function RecipesPage() {
       const params = new URLSearchParams();
       routeConfig.parameters.forEach(param => {
         const value = searchParams[param.name] || param.defaultValue;
-        if (value) params.append(param.name, value);
+        if (value !== undefined && value !== null) {
+          params.append(param.name, value);
+        }
       });
 
       const response = await fetch(`http://localhost:8080/${selectedRoute}?${params}`);
-      if (!response.ok) throw new Error("Failed to fetch recipes");
+      if (!response.ok) {
+        throw new Error(`Failed to fetch recipes: ${response.statusText}`);
+      }
 
       const data = await response.json();
+      if (!Array.isArray(data)) {
+        throw new Error('Invalid response format');
+      }
+
       setRecipes(data);
     } catch (error) {
       console.error("Error fetching recipes:", error);

@@ -41,16 +41,17 @@ const test = async function(req, res) {
 //Route 1 - Find the X most recent recipes
 
 const most_recent = async function(req, res) {
+  const limit = parseInt(req.query.number_of_recents) || 10;
 
   connection.query(`
-    SELECT name, date_published, cook_time, prep_time, servings, image_url
-    FROM recipes 
-    ORDER BY date_published DESC 
-    LIMIT '${req.query.number_of_recents}';
-    `, (err, data) => {
+    SELECT name, date_published, cook_time, prep_time, servings, image_url, id
+    FROM recipes
+    ORDER BY date_published DESC
+      LIMIT $1;
+  `, [limit], (err, data) => {
     if (err) {
       console.log(err);
-      res.json({});
+      res.status(500).json({ error: 'Internal Server Error' });
     } else {
       res.json(data.rows);
     }
@@ -276,7 +277,7 @@ const recipe_count_category = async function(req, res) {
 const recipe_info_name = async function(req, res) {
 
   connection.query(`
-    SELECT r.name, r.description, r.instructions, r.prep_time, r.cook_time, r.servings, r.image_url 
+    SELECT r.name, r.description, r.instructions, r.prep_time, r.cook_time, r.servings, r.image_url
     FROM recipes r 
     WHERE r.name = '${req.query.recipe_name}';
     `, (err, data) => {

@@ -23,6 +23,7 @@ export default function RecipeDetail() {
                     encodeURIComponent(name).replace(/_/g, '%20').replace(/'/g, '%27'));
                 const data = await response.json();
                 setRecipe(data[0]);
+                console.log(data[0]);
             } catch (error) {
                 console.error("Error fetching recipes:", error);
             }

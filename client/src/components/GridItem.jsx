@@ -1,5 +1,6 @@
 import { Link } from '@nextui-org/react';
 import PropTypes from 'prop-types';
+import {useNavigate} from "react-router-dom";
 
 function getDifficulty(time) {
   if (time < 30) return "Easy";
@@ -11,6 +12,7 @@ export default function GridItem({ recipeItem }) {
   GridItem.propTypes = {
     recipeItem: PropTypes.shape({
       name: PropTypes.string.isRequired,
+      id: PropTypes.number.isRequired,
       prep_time: PropTypes.number,
       cook_time: PropTypes.number,
       servings: PropTypes.number,
@@ -18,6 +20,8 @@ export default function GridItem({ recipeItem }) {
       image_url: PropTypes.string.isRequired,
     }).isRequired,
   };
+
+  const navigate = useNavigate();
 
   return (
     <div
@@ -38,7 +42,7 @@ export default function GridItem({ recipeItem }) {
                   <path fill="currentColor"
                         d="M7.5 6.5C7.5 8.981 9.519 11 12 11s4.5-2.019 4.5-4.5S14.481 2 12 2S7.5 4.019 7.5 6.5M20 21h1v-1c0-3.859-3.141-7-7-7h-4c-3.86 0-7 3.141-7 7v1z"/>
                 </svg>
-                <span className="leading-4">{Math.floor(recipeItem.servings)} Servings</span>
+                <span className="leading-4">{recipeItem.servings ? Math.floor(recipeItem.servings) : "N/A"} Servings</span>
               </div>
               <div className="flex items-center gap-1">
                 <svg className={"w-4 h-4"} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
@@ -52,7 +56,11 @@ export default function GridItem({ recipeItem }) {
         </div>
         <div className="h-1/4 bg-white m-3">
         <h1 className="font-bold text-xl text-gray-900 truncate">{recipeItem.name}</h1>
-          <Link href="#" className="text-customTertiary font-thin text-sm underline underline-offset-2">View Recipe</Link>
+          <Link
+              className="text-customTertiary font-thin text-sm underline underline-offset-2"
+              onPress={() => navigate(`/recipe/${recipeItem.id}/${encodeURIComponent(recipeItem.name.toLowerCase().replace(/\s+/g, '-'))}`)}>
+            View Recipe
+          </Link>
         </div>
       </div>
     </div>

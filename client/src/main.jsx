@@ -8,6 +8,7 @@ import CustomNavbar from "./components/CustomNavbar.jsx";
 import RecipesPage from "./pages/recipes.jsx";
 import HomePage from "./pages/home.jsx";
 import AboutPage from "./pages/about.jsx";
+import RecipeDetail from "./pages/RecipeDetail.jsx";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -20,6 +21,7 @@ createRoot(document.getElementById('root')).render(
                       <Route path="/" element={<HomePage />} />
                       <Route path="/recipes" element={<RecipesPage />} />
                       <Route path="/about" element={<AboutPage />} />
+                      <Route path="/recipe/:id/:name?" element={<RecipeDetail />} />
                   </Routes>
               </Container>
             </main>

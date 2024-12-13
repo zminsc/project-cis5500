@@ -20,7 +20,7 @@ export default function HomePage() {
     };
 
     fetchRecipes();
-  }, [recipes]);
+  }, []);
 
   return (
     <div className="container mx-auto my-8 px-4 t-52">

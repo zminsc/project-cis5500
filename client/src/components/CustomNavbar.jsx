@@ -6,7 +6,7 @@ export default function CustomNavbar() {
     const navigate = useNavigate();
 
     return (
-        <Navbar shouldHideOnScroll={true}>
+        <Navbar shouldHideOnScroll={true} className={"max-w-[1024px]"}>
             <NavbarBrand className={"gap-2"}>
                 <svg width="21" height="19" viewBox="0 0 21 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path

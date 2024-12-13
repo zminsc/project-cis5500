@@ -86,7 +86,6 @@ const recipe_prep_time = async function(req, res) {
     SELECT name, date_published, cook_time, prep_time, servings, image_url 
     FROM recipes 
     WHERE prep_time + cook_time <= '${req.query.cook_time}';
-
     `, (err, data) => {
     if (err) {
       console.log(err);
@@ -119,7 +118,7 @@ const avg_cal_category = async function(req, res) {
       console.log(err);
       res.json({});
     } else {
-      res.json(data.rows[0]);
+      res.json(data.rows);
     }
   });
 }
@@ -138,7 +137,7 @@ const ingredients_category = async function(req, res) {
     SELECT i.name
     FROM ingredients i
     JOIN uses u ON i.id = u.ingredient_id
-    JOIN category_recipes cr ON u.recipe_id = cr.id;
+    JOIN category_recipes cr ON u.recipe_id = cr.id
     GROUP BY i.name;
     `, (err, data) => {
     if (err) {

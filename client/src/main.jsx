@@ -9,6 +9,7 @@ import RecipesPage from "./pages/recipes.jsx";
 import HomePage from "./pages/home.jsx";
 import AboutPage from "./pages/about.jsx";
 import RecipeDetail from "./pages/RecipeDetail.jsx";
+import StatsPage from './pages/stats.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -20,6 +21,7 @@ createRoot(document.getElementById('root')).render(
                   <Routes>
                       <Route path="/" element={<HomePage />} />
                       <Route path="/recipes" element={<RecipesPage />} />
+                      <Route path="/stats" element={<StatsPage />} />
                       <Route path="/about" element={<AboutPage />} />
                       <Route path="/recipe/:name" element={<RecipeDetail />} />
                   </Routes>

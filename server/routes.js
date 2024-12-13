@@ -271,9 +271,9 @@ const recipe_count_category = async function(req, res) {
 const recipe_info_name = async function(req, res) {
 
   connection.query(`
-    SELECT r.name, r.description, r.instructions, r.prep_time, r.cook_time, r.servings 
+    SELECT *
     FROM recipes r 
-    WHERE r.name = '${req.params.recipe_name}';
+    WHERE r.name = '${req.params.recipe_name}' AND r.image_url IS NOT NULL;
     `, (err, data) => {
     if (err) {
       console.log(err);

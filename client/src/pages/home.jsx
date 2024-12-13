@@ -43,7 +43,7 @@ export default function HomePage() {
             key={recipe.id}
             recipeItem={recipe}
           />
-        ))} : <div className="flex items-center justify-center h-screen"><Spinner color="warning"/></div>
+        ))}
       </div>
     </div>
   );

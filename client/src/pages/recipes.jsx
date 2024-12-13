@@ -18,7 +18,7 @@ export default function RecipesPage() {
       name: "most_recent",
       label: "Most Recent Recipes",
       parameters: [
-        { name: "number_of_returns", type: "slider", label: "Number of Recipes", min: 5, max: 50, step: 5, defaultValue: 10 }
+        { name: "number_of_recents", type: "slider", label: "Number of Recipes", min: 5, max: 50, step: 5, defaultValue: 10 }
       ]
     },
     {
@@ -32,7 +32,7 @@ export default function RecipesPage() {
       name: "recipe_prep_time",
       label: "Recipes by Preparation Time",
       parameters: [
-        { name: "cook_time", type: "slider", label: "Maximum Cook Time (minutes)", min: 1, max: 30, step: 11, defaultValue: 1 }
+        { name: "cook_time", type: "slider", label: "Maximum Cook Time (minutes)", min: 1, max: 60, step: 1, defaultValue: 30 }
       ]
     },
     {
@@ -68,7 +68,7 @@ export default function RecipesPage() {
         { name: "number_of_returns", type: "slider", label: "Number of Recipes", min: 5, max: 50, step: 5, defaultValue: 10 }
       ]
     }
-  ];
+  ];  
 
   const routeOptions = availableRoutes.map((route) => ({
     value: route.name,
@@ -78,41 +78,40 @@ export default function RecipesPage() {
   const handleSearch = async () => {
     setIsLoading(true);
     setError(null);
-
+  
     try {
       const routeConfig = availableRoutes.find(r => r.name === searchRoute);
       if (!routeConfig) throw new Error("Invalid route selected");
-
-      const missingParams = routeConfig.parameters.filter(
-        param => !searchParams[param.name] && param.defaultValue === ""
-      );
-
-      if (missingParams.length > 0) {
-        throw new Error(`Missing required parameters: ${missingParams.map(p => p.label).join(", ")}`);
-      }
-
-      const paramString = routeConfig.parameters
-        .map(param => searchParams[param.name] || param.defaultValue)
-        .join("/");
-
-      const url = `http://localhost:8080/${searchRoute}/${paramString}`;
+  
+      const queryParams = new URLSearchParams();
+  
+      routeConfig.parameters.forEach(param => {
+        const value = searchParams[param.name] || param.defaultValue;
+        if (value !== undefined && value !== "") {
+          queryParams.append(param.name, value);
+        }
+      });
+  
+      const queryString = queryParams.toString();
+      const url = `http://localhost:8080/${searchRoute}${queryString ? `?${queryString}` : ""}`;
+  
       const response = await fetch(url);
-
+  
       if (!response.ok) {
         throw new Error("Failed to fetch recipes");
       }
-
+  
       const data = await response.json();
-
+  
       const uniqueRecipesMap = new Map(
         data.map((recipe) => {
           const uniqueKey = recipe.id || recipe.name || JSON.stringify(recipe);
           return [uniqueKey, recipe];
         })
       );
-
+  
       const uniqueRecipes = Array.from(uniqueRecipesMap.values());
-
+  
       setRecipes(uniqueRecipes);
       setIsLoading(false);
     } catch (error) {
@@ -121,7 +120,7 @@ export default function RecipesPage() {
       setRecipes([]);
       setIsLoading(false);
     }
-  };
+  };  
 
   const handleParamChange = (paramName, value) => {
     setSearchParams((prev) => ({

@@ -185,7 +185,7 @@ export default function RecipesPage() {
                             value={searchParams[param.name] || ""}
                             onChange={e => setSearchParams(prev => ({
                               ...prev,
-                              [param.name]: e.target.value.toLowerCase()
+                              [param.name]: e.target.value
                             }))}
                             placeholder={param.label}
                             aria-label={param.label}

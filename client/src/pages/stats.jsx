@@ -69,11 +69,14 @@ export default function StatsPage() {
       const url = `http://localhost:8080/${searchRoute}?${queryString}`;
       const response = await fetch(url);
       const data = await response.json();
-      setIngredients(data);
+  
+      // Adjust if the ingredients are wrapped in a response object
+      setIngredients(data.ingredients || data); 
     } catch (error) {
       console.error("Error fetching ingredients by category:", error);
     }
   };
+  
 
   // Prepare data for Recipe Count by Category chart
   const categoryChartData = {
@@ -133,32 +136,32 @@ export default function StatsPage() {
           "Loading..."
         )}
       </div>
+    {/* Ingredient Search by Category */}
+    <div className="mb-8">
+    <h2 className="text-xl font-semibold">Search Ingredients by Category</h2>
+    <div className="flex items-center space-x-4">
+        <input
+        type="text"
+        value={ingredientCategory}
+        onChange={(e) => setIngredientCategory(e.target.value)}
+        placeholder="Enter a category"
+        className="p-2 border rounded"
+        />
+        <Button onPress={fetchIngredientsByCategory}>Search</Button>
+    </div>
+    {ingredients.length ? (
+        <ul className="mt-4">
+        {ingredients.map((ingredient, index) => (
+            <li key={index} className="p-2 border-b">
+            {ingredient} {/* Directly display the ingredient string */}
+            </li>
+        ))}
+        </ul>
+    ) : (
+        "No ingredients found for this category or enter a category to search."
+    )}
+    </div>
 
-      {/* Ingredient Search by Category */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold">Search Ingredients by Category</h2>
-        <div className="flex items-center space-x-4">
-          <input
-            type="text"
-            value={ingredientCategory}
-            onChange={(e) => setIngredientCategory(e.target.value)}
-            placeholder="Enter a category"
-            className="p-2 border rounded"
-          />
-          <Button onPress={fetchIngredientsByCategory}>Search</Button>
-        </div>
-        {ingredients.length ? (
-          <ul className="mt-4">
-            {ingredients.map((ingredient, index) => (
-              <li key={index} className="p-2 border-b">
-                {ingredient.name}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          "Enter a category to search ingredients"
-        )}
-      </div>
     </div>
   );
 }

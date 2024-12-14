@@ -53,16 +53,8 @@ const ROUTES = [
     ]
   },
   {
-    name: "avg_cal_category",
-    label: "Category Calories",
-    type: "stats",
-    parameters: [
-      { name: "cat_name", type: "text", label: "Category Name", defaultValue: "" }
-    ]
-  },
-  {
     name: "ingredients_category",
-    label: "Category Ingredients",
+    label: "Ingredients by Category",
     type: "ingredients",
     parameters: [
       { name: "cat_name", type: "text", label: "Category Name", defaultValue: "" }
@@ -193,7 +185,7 @@ export default function RecipesPage() {
                             value={searchParams[param.name] || ""}
                             onChange={e => setSearchParams(prev => ({
                               ...prev,
-                              [param.name]: e.target.value
+                              [param.name]: e.target.value.toLowerCase()
                             }))}
                             placeholder={param.label}
                             aria-label={param.label}

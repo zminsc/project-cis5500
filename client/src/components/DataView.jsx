@@ -19,20 +19,6 @@ export default function DataView({ data, type }) {
                     </CardBody>
                 </Card>
             );
-
-        case "avg_cal_category":
-            return (
-                <Card className="w-full">
-                    <CardBody className="text-center">
-                        <h2 className="text-xl font-bold mb-4">Average Calories</h2>
-                        <p className="text-4xl font-bold text-customGreen">
-                            {Math.round(data.average_calories)}
-                        </p>
-                        <p className="text-gray-600">calories per recipe in this category</p>
-                    </CardBody>
-                </Card>
-            );
-
         default:
             return null;
     }

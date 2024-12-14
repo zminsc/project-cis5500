@@ -277,7 +277,7 @@ const recipe_count_category = async function(req, res) {
 const recipe_info_name = async function(req, res) {
 
   connection.query(`
-    SELECT r.name, r.description, r.instructions, r.prep_time, r.cook_time, r.servings, r.image_url, r.date_published
+    SELECT r.name, r.description, r.instructions, r.prep_time, r.cook_time, r.servings, r.image_url, r.date_published, r.ingredients
     FROM recipes r 
     WHERE r.name = '${req.query.recipe_name}';
     `, (err, data) => {

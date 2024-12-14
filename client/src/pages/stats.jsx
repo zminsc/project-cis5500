@@ -7,6 +7,9 @@ import Chart from "chart.js/auto";
 export default function StatsPage() {
   const [recipeCountsByCategory, setRecipeCountsByCategory] = useState([]);
   const [topProteinRecipes, setTopProteinRecipes] = useState([]); // State for top protein recipes
+  const [avgCaloriesByCategory, setAvgCaloriesByCategory] = useState(null); // State for average calories
+  const [categoryInput, setCategoryInput] = useState(""); // User input for category
+  const [loading, setLoading] = useState(false); // State for loading
   const navigate = useNavigate();
 
   // Fetch recipe counts by category
@@ -39,6 +42,30 @@ export default function StatsPage() {
     };
     fetchTopProteinRecipes();
   }, []);
+
+  // Fetch average calories for a selected category
+  const fetchAvgCaloriesByCategory = async (catName) => {
+    setLoading(true); // Start loading
+    try {
+      const url = `http://localhost:8080/avg_cal_category?cat_name=${catName}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      setAvgCaloriesByCategory(data[0]?.average_calories || null);
+    } catch (error) {
+      console.error("Error fetching average calories by category:", error);
+      setAvgCaloriesByCategory(null);
+    } finally {
+      setLoading(false); // End loading
+    }
+  };
+
+  // Handle form submission to fetch average calories
+  const handleSearch = (event) => {
+    event.preventDefault();
+    if (categoryInput.trim()) {
+      fetchAvgCaloriesByCategory(categoryInput.trim());
+    }
+  };
 
   // Prepare data for Recipe Count by Category chart
   const categoryChartData = {
@@ -85,6 +112,8 @@ export default function StatsPage() {
         </Button>
       </div>
 
+      
+
       {/* Recipes by Category Chart */}
       <div className="mb-8">
         <h2 className="text-xl font-semibold">Recipe Count by Category</h2>
@@ -94,6 +123,41 @@ export default function StatsPage() {
           "Loading..."
         )}
       </div>
+
+      <hr className="my-8 border-t-2 border-gray-300" />
+
+
+      {/* Recipe Search Section (Centered) */}
+      <div className="flex justify-left mb-8">
+        <div className="text-center max-w-md w-full p-4 border rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Search Average Calories by Category</h2>
+          <form onSubmit={handleSearch}>
+            <input
+              type="text"
+              placeholder="Enter category name"
+              value={categoryInput}
+              onChange={(e) => setCategoryInput(e.target.value)}
+              className="border p-2 rounded w-full mb-4"
+            />
+            <Button type="submit" className="bg-customSecondary text-customPrimary w-full">
+              Search
+            </Button>
+          </form>
+          {loading ? (
+            <p>Loading...</p>
+          ) : avgCaloriesByCategory !== null ? (
+            <p className="mt-4">
+              The average calories for category <strong>{categoryInput}</strong> is{" "}
+              <strong>{avgCaloriesByCategory}</strong> kcal.
+            </p>
+          ) : (
+            categoryInput && <p>No data available for the specified category.</p>
+          )}
+        </div>
+      </div>
+
+      <hr className="my-8 border-t-2 border-gray-300" />
+
 
       {/* Top 10 Recipes by Protein Content Chart */}
       <div className="mb-8">

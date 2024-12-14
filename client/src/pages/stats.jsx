@@ -6,10 +6,7 @@ import Chart from "chart.js/auto";
 
 export default function StatsPage() {
   const [recipeCountsByCategory, setRecipeCountsByCategory] = useState([]);
-  const [topProteinRecipes, setTopProteinRecipes] = useState([]);
-  const [avgCaloriesByCategory, setAvgCaloriesByCategory] = useState([]);
-  const [ingredientCategory, setIngredientCategory] = useState("");
-  const [ingredients, setIngredients] = useState([]);
+  const [topProteinRecipes, setTopProteinRecipes] = useState([]); // State for top protein recipes
   const navigate = useNavigate();
 
   // Fetch recipe counts by category
@@ -28,13 +25,11 @@ export default function StatsPage() {
     fetchRecipeCountsByCategory();
   }, []);
 
-  // Fetch top 5 recipes with highest protein
+  // Fetch top 10 recipes with highest protein
   useEffect(() => {
     const fetchTopProteinRecipes = async () => {
       try {
-        const searchRoute = "recipes_protein";
-        const queryString = "limit=5";
-        const url = `http://localhost:8080/${searchRoute}?${queryString}`;
+        const url = `http://localhost:8080/recipes_protein`;
         const response = await fetch(url);
         const data = await response.json();
         setTopProteinRecipes(data);
@@ -45,39 +40,6 @@ export default function StatsPage() {
     fetchTopProteinRecipes();
   }, []);
 
-  // Fetch average calories by category
-  useEffect(() => {
-    const fetchAvgCaloriesByCategory = async () => {
-      try {
-        const searchRoute = "avg_cal_category";
-        const url = `http://localhost:8080/${searchRoute}`;
-        const response = await fetch(url);
-        const data = await response.json();
-        setAvgCaloriesByCategory(data);
-      } catch (error) {
-        console.error("Error fetching average calories by category:", error);
-      }
-    };
-    fetchAvgCaloriesByCategory();
-  }, []);
-
-  // Fetch ingredients by category
-  const fetchIngredientsByCategory = async () => {
-    try {
-      const searchRoute = "ingredients_category";
-      const queryString = `category=${ingredientCategory}`;
-      const url = `http://localhost:8080/${searchRoute}?${queryString}`;
-      const response = await fetch(url);
-      const data = await response.json();
-  
-      // Adjust if the ingredients are wrapped in a response object
-      setIngredients(data.ingredients || data); 
-    } catch (error) {
-      console.error("Error fetching ingredients by category:", error);
-    }
-  };
-  
-
   // Prepare data for Recipe Count by Category chart
   const categoryChartData = {
     labels: recipeCountsByCategory.map((item) => item.name),
@@ -87,6 +49,20 @@ export default function StatsPage() {
         data: recipeCountsByCategory.map((item) => item.recipe_count),
         backgroundColor: "rgba(75, 192, 192, 0.2)",
         borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  // Prepare data for Top Protein Recipes chart
+  const topProteinChartData = {
+    labels: topProteinRecipes.map((recipe) => recipe.name),
+    datasets: [
+      {
+        label: "Protein Content (g)",
+        data: topProteinRecipes.map((recipe) => recipe.protein_content),
+        backgroundColor: "rgba(153, 102, 255, 0.6)",
+        borderColor: "rgba(153, 102, 255, 1)",
         borderWidth: 1,
       },
     ],
@@ -119,49 +95,15 @@ export default function StatsPage() {
         )}
       </div>
 
-    
-      {/* Average Calories by Category */}
+      {/* Top 10 Recipes by Protein Content Chart */}
       <div className="mb-8">
-        <h2 className="text-xl font-semibold">Average Calories by Category</h2>
-        {avgCaloriesByCategory.length ? (
-          <ul>
-            {avgCaloriesByCategory.map((category, index) => (
-              <li key={index} className="p-2 border-b">
-                <h3>{category.name}</h3>
-                <p>Average Calories: {category.avg_calories} kcal</p>
-              </li>
-            ))}
-          </ul>
+        <h2 className="text-xl font-semibold">Top 10 Recipes by Protein Content</h2>
+        {topProteinRecipes.length ? (
+          <Bar data={topProteinChartData} options={{ responsive: true }} />
         ) : (
-          "Loading..."
+          <p>Loading...</p>
         )}
       </div>
-    {/* Ingredient Search by Category */}
-    <div className="mb-8">
-    <h2 className="text-xl font-semibold">Search Ingredients by Category</h2>
-    <div className="flex items-center space-x-4">
-        <input
-        type="text"
-        value={ingredientCategory}
-        onChange={(e) => setIngredientCategory(e.target.value)}
-        placeholder="Enter a category"
-        className="p-2 border rounded"
-        />
-        <Button onPress={fetchIngredientsByCategory}>Search</Button>
-    </div>
-    {ingredients.length ? (
-        <ul className="mt-4">
-        {ingredients.map((ingredient, index) => (
-            <li key={index} className="p-2 border-b">
-            {ingredient} {/* Directly display the ingredient string */}
-            </li>
-        ))}
-        </ul>
-    ) : (
-        "No ingredients found for this category or enter a category to search."
-    )}
-    </div>
-
     </div>
   );
 }

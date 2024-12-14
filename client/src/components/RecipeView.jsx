@@ -24,7 +24,7 @@ const RecipeView = ({ recipe, onClose }) => {
           </div>
           <div>
             <h3 className="text-lg font-bold mb-2">Instructions</h3>
-            <ol className="list-decimal pl-4">
+            <ol className="list-decima  l pl-4">
               {recipe.instructions.map((step, index) => (
                 <li key={index}>{step}</li>
               ))}

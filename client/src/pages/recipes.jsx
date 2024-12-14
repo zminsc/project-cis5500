@@ -11,11 +11,13 @@ import {
   Chip,
   Divider
 } from "@nextui-org/react";
+import DataView from "../components/DataView";
 
 const ROUTES = [
   {
     name: "most_recent",
     label: "Most Recent",
+    type: "recipe",
     parameters: [
       { name: "number_of_recents", type: "slider", label: "Number of Recipes", min: 5, max: 50, step: 5, defaultValue: 10 }
     ]
@@ -23,6 +25,7 @@ const ROUTES = [
   {
     name: "most_reviews",
     label: "Most Reviewed",
+    type: "recipe",
     parameters: [
       { name: "number_reviews", type: "slider", label: "Number of Recipes", min: 5, max: 50, step: 5, defaultValue: 10 }
     ]
@@ -30,20 +33,47 @@ const ROUTES = [
   {
     name: "recipe_prep_time",
     label: "Quick Recipes",
+    type: "recipe",
     parameters: [
-      { name: "cook_time", type: "slider", label: "Maximum Total Time (minutes)", min: 1, max: 120, step: 5, defaultValue: 30 }
+      { name: "cook_time", type: "slider", label: "Maximum Total Time (minutes)", min: 1, max: 120, step: 1, defaultValue: 0 }
     ]
   },
   {
     name: "recipes_protein",
     label: "High Protein",
+    type: "recipe",
     parameters: []
   },
   {
     name: "recipes_avg_rating",
     label: "Top Rated",
+    type: "recipe",
     parameters: [
       { name: "number_of_returns", type: "slider", label: "Number of Recipes", min: 5, max: 50, step: 5, defaultValue: 10 }
+    ]
+  },
+  {
+    name: "avg_cal_category",
+    label: "Category Calories",
+    type: "stats",
+    parameters: [
+      { name: "cat_name", type: "text", label: "Category Name", defaultValue: "" }
+    ]
+  },
+  {
+    name: "ingredients_category",
+    label: "Category Ingredients",
+    type: "ingredients",
+    parameters: [
+      { name: "cat_name", type: "text", label: "Category Name", defaultValue: "" }
+    ]
+  },
+  {
+    name: "recipe_specific",
+    label: "Search by Ingredients",
+    type: "recipe",
+    parameters: [
+      { name: "ingredients", type: "text", label: "Ingredients (comma-separated)", defaultValue: "" }
     ]
   }
 ];
@@ -54,8 +84,12 @@ export default function RecipesPage() {
   const [searchParams, setSearchParams] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const currentRoute = ROUTES.find(r => r.name === selectedRoute);
+  const filteredRecipes = recipes.filter(recipe =>
+      recipe.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const fetchRecipes = async () => {
     setIsLoading(true);
@@ -104,6 +138,15 @@ export default function RecipesPage() {
             <CardBody className="gap-4 p-6">
               <h2 className="text-xl font-bold mb-4">Filters</h2>
 
+              <Input
+                  type="text"
+                  label="Search Recipes"
+                  placeholder="Type to search..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="mb-4"
+              />
+
               <div className="mb-6">
                 <Select
                     label="Search Type"
@@ -125,6 +168,7 @@ export default function RecipesPage() {
                     {param.type === "slider" ? (
                         <div className="px-2">
                           <Slider
+                              color={"warning"}
                               size="sm"
                               step={param.step}
                               minValue={param.min}
@@ -173,18 +217,20 @@ export default function RecipesPage() {
           </Card>
         </div>
 
-        <div className="flex-1 p-8 pr-64" role="region" aria-label="Recipe results">
+        <div className="flex-1 p-8 pr-64" role="region" aria-label="Results">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold text-foreground">
-              All Recipes
+              {currentRoute?.label || "All Recipes"}
             </h1>
-            <Chip
-                color="warning"
-                variant="flat"
-                aria-label={`${recipes.length} recipes found`}
-            >
-              {recipes.length} results
-            </Chip>
+            {currentRoute?.type === "recipe" && (
+                <Chip
+                    color="warning"
+                    variant="flat"
+                    aria-label={`${filteredRecipes.length} recipes found`}
+                >
+                  {filteredRecipes.length} results
+                </Chip>
+            )}
           </div>
 
           {error && (
@@ -195,24 +241,26 @@ export default function RecipesPage() {
               </Card>
           )}
 
-          <div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6"
-              role="list"
-              aria-label="Recipe grid"
-          >
-            {(Array.isArray(recipes) ? recipes : []).map((recipe) => (
-                <div key={recipe.id || recipe.name} role="listitem">
-                  <GridItem
-                      recipeItem={recipe}
-                  />
-                </div>
-            ))}
-          </div>
+          {currentRoute?.type === "recipe" ? (
+              <div
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6"
+                  role="list"
+                  aria-label="Recipe grid"
+              >
+                {filteredRecipes.map((recipe) => (
+                    <div key={recipe.id || recipe.name} role="listitem">
+                      <GridItem recipeItem={recipe}/>
+                    </div>
+                ))}
+              </div>
+          ) : (
+              <DataView data={recipes} type={selectedRoute}/>
+          )}
 
           {!isLoading && recipes.length === 0 && !error && (
               <Card className="text-center p-8" role="alert">
                 <CardBody>
-                  <p className="text-gray-500">No recipes found. Try adjusting your filters.</p>
+                  <p className="text-gray-500">No results found. Try adjusting your filters.</p>
                 </CardBody>
               </Card>
           )}

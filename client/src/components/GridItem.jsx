@@ -1,7 +1,7 @@
 import { Link } from '@nextui-org/react';
 import PropTypes from 'prop-types';
 import { useNavigate } from "react-router-dom";
-import { getDifficulty } from "../utils.js";
+import {getDifficulty, IMG_PLACEHOLDER} from "../utils.js";
 
 export default function GridItem({ recipeItem }) {
   GridItem.propTypes = {
@@ -17,16 +17,13 @@ export default function GridItem({ recipeItem }) {
   };
 
   const navigate = useNavigate();
-  
-  // Default image URL (you can replace this with any URL you want)
-  const defaultImageUrl = "https://media.istockphoto.com/id/1155240408/photo/table-filled-with-large-variety-of-food.jpg?s=612x612&w=0&k=20&c=uJEbKmR3wOxwdhQR_36as5WeP6_HDqfU-QmAq63OVEE=";
 
   return (
     <div className="block transform transition-all duration-300 hover:scale-105 hover:shadow-lg h-64">
       <div className="bg-white border border-gray-200 rounded-lg shadow-md h-full flex flex-col overflow-hidden">
         <div
           className="h-3/4 w-full bg-cover bg-center flex flex-col-reverse"
-          style={{ backgroundImage: `url(${recipeItem.image_url || defaultImageUrl})` }}
+          style={{ backgroundImage: `url(${recipeItem.image_url || IMG_PLACEHOLDER})` }}
         >
           <div className="h-1/6 bg-white bg-opacity-90 flex items-center">
             <div className="flex justify-between items-center px-4 text-customGreen text-xs w-full">

@@ -10,7 +10,7 @@ import {
     Chip,
     Button
 } from "@nextui-org/react";
-import {formatDate, getDifficulty} from "../utils.js";
+import {formatDate, getDifficulty, IMG_PLACEHOLDER} from "../utils.js";
 
 export default function RecipeDetail() {
     const { name } = useParams();
@@ -134,7 +134,7 @@ export default function RecipeDetail() {
                             <Image
                                 alt={recipe.name}
                                 className="object-cover rounded-xl"
-                                src={recipe.image_url ?? ""}
+                                src={recipe.image_url || IMG_PLACEHOLDER}
                                 width="100%"
                             />
                         </div>

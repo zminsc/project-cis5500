@@ -6,13 +6,13 @@ import Chart from "chart.js/auto";
 
 export default function StatsPage() {
   const [recipeCountsByCategory, setRecipeCountsByCategory] = useState([]);
-  const [topProteinRecipes, setTopProteinRecipes] = useState([]); // State for top protein recipes
-  const [avgCaloriesByCategory, setAvgCaloriesByCategory] = useState(null); // State for average calories
-  const [categoryInput, setCategoryInput] = useState(""); // User input for category
-  const [loading, setLoading] = useState(false); // State for loading
+  const [topProteinRecipes, setTopProteinRecipes] = useState([]); 
+  const [avgCaloriesByCategory, setAvgCaloriesByCategory] = useState(null); 
+  const [categoryInput, setCategoryInput] = useState(""); 
+  const [loading, setLoading] = useState(false); 
   const navigate = useNavigate();
 
-  // Fetch recipe counts by category
+ 
   useEffect(() => {
     const fetchRecipeCountsByCategory = async () => {
       try {
@@ -28,7 +28,7 @@ export default function StatsPage() {
     fetchRecipeCountsByCategory();
   }, []);
 
-  // Fetch top 10 recipes with highest protein
+  
   useEffect(() => {
     const fetchTopProteinRecipes = async () => {
       try {
@@ -43,9 +43,8 @@ export default function StatsPage() {
     fetchTopProteinRecipes();
   }, []);
 
-  // Fetch average calories for a selected category
   const fetchAvgCaloriesByCategory = async (catName) => {
-    setLoading(true); // Start loading
+    setLoading(true); 
     try {
       const url = `http://localhost:8080/avg_cal_category?cat_name=${catName}`;
       const response = await fetch(url);
@@ -55,11 +54,11 @@ export default function StatsPage() {
       console.error("Error fetching average calories by category:", error);
       setAvgCaloriesByCategory(null);
     } finally {
-      setLoading(false); // End loading
+      setLoading(false);
     }
   };
 
-  // Handle form submission to fetch average calories
+ 
   const handleSearch = (event) => {
     event.preventDefault();
     if (categoryInput.trim()) {
@@ -67,7 +66,7 @@ export default function StatsPage() {
     }
   };
 
-  // Prepare data for Recipe Count by Category chart
+ 
   const categoryChartData = {
     labels: recipeCountsByCategory.map((item) => item.name),
     datasets: [
@@ -81,7 +80,7 @@ export default function StatsPage() {
     ],
   };
 
-  // Prepare data for Top Protein Recipes chart
+
   const topProteinChartData = {
     labels: topProteinRecipes.map((recipe) => recipe.name),
     datasets: [
@@ -114,7 +113,7 @@ export default function StatsPage() {
 
       
 
-      {/* Recipes by Category Chart */}
+     
       <div className="mb-8">
         <h2 className="text-xl font-semibold">Recipe Count by Category</h2>
         {recipeCountsByCategory.length ? (
@@ -127,7 +126,7 @@ export default function StatsPage() {
       <hr className="my-8 border-t-2 border-gray-300" />
 
 
-      {/* Recipe Search Section (Centered) */}
+     
       <div className="flex justify-left mb-8">
         <div className="text-center max-w-md w-full p-4 border rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-4">Search Average Calories by Category</h2>
@@ -159,7 +158,7 @@ export default function StatsPage() {
       <hr className="my-8 border-t-2 border-gray-300" />
 
 
-      {/* Top 10 Recipes by Protein Content Chart */}
+      
       <div className="mb-8">
         <h2 className="text-xl font-semibold">Top 10 Recipes by Protein Content</h2>
         {topProteinRecipes.length ? (

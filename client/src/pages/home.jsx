@@ -11,8 +11,6 @@ export default function HomePage() {
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        // console.log(config.server_host)
-        // console.log(config.server_port)
         const response = await fetch(`${config.server_host}/recipes/simplified?limit=9`);
         const data = await response.json();
 
@@ -40,6 +38,7 @@ export default function HomePage() {
           See All
         </Button>
       </div>
+      {/* Grid Item generates the recipie cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-8">
       {recipes && recipes.map((recipe) => (
           <GridItem

@@ -17,6 +17,7 @@ export default function RecipeDetail() {
     const { name } = useParams();
     const [recipe, setRecipe] = useState(null);
 
+    //Inital Error Handlings
     useEffect(() => {
         const fetchRecipes = async () => {
             try {
@@ -41,6 +42,9 @@ export default function RecipeDetail() {
         );
     }
 
+    //Inital logic here handled the top of the card
+    //We can see the save recipe, and various traits
+    //The bottom is where we can see the other instructions, ingrediants, instructions
     return (
         <div className="py-8">
             <Card className="p-6">
@@ -141,6 +145,7 @@ export default function RecipeDetail() {
                         </div>
                         <div className="space-y-4">
                             <div>
+                                {/* Handling of Ingrediants */}
                                 <h2 className="text-xl font-semibold text-foreground mb-2">Ingredients</h2>
                                 <ol className="list-disc list-inside space-y-2">
                                     {recipe.ingredients ? recipe.ingredients.split(", ").filter(ingredients => ingredients.trim()).map((ingredients, index) => (
@@ -152,6 +157,7 @@ export default function RecipeDetail() {
                             </div>
                             <Divider/>
                             <div>
+                                {/* Handling of Instructions */}
                                 <h2 className="text-xl font-semibold text-foreground mb-2">Instructions</h2>
                                 <ol className="list-decimal list-inside space-y-2">
                                     {recipe.instructions ? recipe.instructions.split(". ").filter(instruction => instruction.trim()).map((instruction, index) => (
@@ -162,8 +168,10 @@ export default function RecipeDetail() {
                                 </ol>
                             </div>
                             <Divider/>
+                            {/* Handling of description */}
                             {recipe.description && (
                                 <div>
+                                    
                                     <h2 className="text-xl font-semibold text-foreground mb-2">Description</h2>
                                     <p className="text-gray-600">{recipe.description}</p>
                                 </div>

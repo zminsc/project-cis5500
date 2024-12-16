@@ -14,6 +14,10 @@ import {
 import DataView from "../components/DataView";
 import config from "../config.json"
 
+
+
+//Routes with default value (self explanatory what each route is)
+//Can adjust slider / min and max here
 const ROUTES = [
   {
     name: "most_recent",
@@ -71,6 +75,7 @@ const ROUTES = [
   }
 ];
 
+
 export default function RecipesPage() {
   const [recipes, setRecipes] = useState([]);
   const [selectedRoute, setSelectedRoute] = useState("most_recent");
@@ -88,6 +93,7 @@ export default function RecipesPage() {
     setIsLoading(true);
     setError(null);
 
+    //Error Handling in try block
     try {
       const routeConfig = ROUTES.find(r => r.name === selectedRoute);
       if (!routeConfig) throw new Error("Invalid search type selected");
@@ -110,6 +116,7 @@ export default function RecipesPage() {
         throw new Error('Invalid response format');
       }
 
+      //sets recipies with correct value here
       setRecipes(data);
     } catch (error) {
       console.error("Error fetching recipes:", error);
@@ -131,6 +138,7 @@ export default function RecipesPage() {
             <CardBody className="gap-4 p-6">
               <h2 className="text-xl font-bold mb-4">Filters</h2>
 
+                {/* Reciper filtering mechanism */}
               <Input
                   type="text"
                   label="Search Recipes"
@@ -156,6 +164,7 @@ export default function RecipesPage() {
                 </Select>
               </div>
 
+                  {/* Slider / user selecter */}
               {currentRoute?.parameters.map(param => (
                   <div key={param.name} className="mb-4">
                     {param.type === "slider" ? (
@@ -210,6 +219,7 @@ export default function RecipesPage() {
           </Card>
         </div>
 
+              {/* logic of filtering by search */}
         <div className="flex-1 p-8 pr-64" role="region" aria-label="Results">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold text-foreground">
@@ -234,6 +244,7 @@ export default function RecipesPage() {
               </Card>
           )}
 
+
           {currentRoute?.type === "recipe" ? (
               <div
                   className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6"
@@ -250,6 +261,8 @@ export default function RecipesPage() {
               <DataView data={recipes} type={selectedRoute}/>
           )}
 
+
+            {/* Handling for no results found */}
           {!isLoading && recipes.length === 0 && !error && (
               <Card className="text-center p-8" role="alert">
                 <CardBody>

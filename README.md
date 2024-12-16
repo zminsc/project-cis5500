@@ -5,6 +5,13 @@
 ## Authors: Logan Brassington, Mahika Calyanakoti, Steven Chang, Cynthia Zhang
 ## Final Project for CIS 5500 (Group 21)
 
+### Running the code
+In order to install the dependencies run: npm install
+
+To run the client (cd into client folder): npm run dev
+
+To run the server (cd into server folder): npm start
+
 ### Data
 The processed data used in this project is stored on Google Drive. You can access it through the following link:
 

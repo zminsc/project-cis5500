@@ -18,6 +18,10 @@ export default function GridItem({ recipeItem }) {
 
   const navigate = useNavigate();
 
+
+  //This is the recipie card
+  //Note that the image URLs are for the logos
+  //Top is handled first, then the bottom of the card
   return (
     <div className="block transform transition-all duration-300 hover:scale-105 hover:shadow-lg h-64">
       <div className="bg-white border border-gray-200 rounded-lg shadow-md h-full flex flex-col overflow-hidden">

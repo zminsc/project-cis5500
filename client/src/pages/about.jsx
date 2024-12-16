@@ -4,6 +4,8 @@ import finalReport from '../assets/final_report.md'
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
+
+//Here are the profiles of the group members with image links to the web
 const teamMembers = [
     {
         name: "Steven Chang",
@@ -41,6 +43,7 @@ export default function AboutPage() {
             .catch(err => console.error(err));
     }, []);
 
+//Imports a google doc here via markdown to populate the rest of the page
     return (
         <div className="mx-auto px-4 py-8">
             <h1 className="text-3xl font-bold text-center mb-10">Our Team</h1>

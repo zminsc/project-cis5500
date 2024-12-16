@@ -12,7 +12,7 @@ export default function StatsPage() {
   const [loading, setLoading] = useState(false); 
   const navigate = useNavigate();
 
- 
+ //recipie counts by catagory bar graph
   useEffect(() => {
     const fetchRecipeCountsByCategory = async () => {
       try {
@@ -28,7 +28,7 @@ export default function StatsPage() {
     fetchRecipeCountsByCategory();
   }, []);
 
-  
+  //protein bar graph
   useEffect(() => {
     const fetchTopProteinRecipes = async () => {
       try {
@@ -43,6 +43,8 @@ export default function StatsPage() {
     fetchTopProteinRecipes();
   }, []);
 
+
+  //Avg Calories for each catagories search bar
   const fetchAvgCaloriesByCategory = async (catName) => {
     setLoading(true); 
     try {
@@ -58,7 +60,7 @@ export default function StatsPage() {
     }
   };
 
- 
+  //search handler (same as other files)
   const handleSearch = (event) => {
     event.preventDefault();
     if (categoryInput.trim()) {
@@ -66,7 +68,7 @@ export default function StatsPage() {
     }
   };
 
- 
+  //recipie counts by catagory bar graph
   const categoryChartData = {
     labels: recipeCountsByCategory.map((item) => item.name),
     datasets: [
@@ -80,7 +82,7 @@ export default function StatsPage() {
     ],
   };
 
-
+ //protein bar graph
   const topProteinChartData = {
     labels: topProteinRecipes.map((recipe) => recipe.name),
     datasets: [

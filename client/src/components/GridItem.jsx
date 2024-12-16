@@ -56,7 +56,7 @@ export default function GridItem({ recipeItem }) {
           <h1 className="font-bold text-xl text-gray-900 truncate">{recipeItem.name}</h1>
           <Link
             className="text-customTertiary font-thin text-sm underline underline-offset-2 cursor-pointer"
-            onPress={() => navigate(`/recipe/${encodeURIComponent(recipeItem.name.replace(/\s+/g, '_'))}`)}
+            onPress={() => navigate(`/recipe/${encodeURIComponent(recipeItem.name)}`)}
           >
             View Recipe
           </Link>

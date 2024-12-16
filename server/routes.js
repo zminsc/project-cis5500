@@ -275,21 +275,25 @@ const recipe_count_category = async function(req, res) {
 
 //Route 10 - Show detailed information for a specific recipe by name.
 
-const recipe_info_name = async function(req, res) {
-
-  connection.query(`
-    SELECT r.name, r.description, r.instructions, r.prep_time, r.cook_time, r.servings, r.image_url, r.date_published, r.ingredients
-    FROM recipes r 
-    WHERE r.name = '${req.query.recipe_name}';
-    `, (err, data) => {
-    if (err) {
-      console.log(err);
-      res.json({});
-    } else {
-      res.json(data.rows);
-    }
-  });
-}
+const recipe_info_name = async function (req, res) {
+  const recipeName = req.query.recipe_name;
+  connection.query(
+      `
+      SELECT 
+          r.name, r.description, r.instructions, r.prep_time, r.cook_time, r.servings, r.image_url, r.date_published, r.ingredients
+      FROM recipes r 
+      WHERE r.name = $1;`, // parameterized queries automatically escape apostrophes
+      [recipeName],
+      (err, data) => {
+          if (err) {
+              console.error("Database error:", err);
+              res.status(500).json({ error: "Internal Server Error" });
+          } else {
+              res.json(data.rows);
+          }
+      }
+  );
+};
 
 const simplified_recipes = async function(req, res) {
   const limit = parseInt(req.query.limit) || 10;

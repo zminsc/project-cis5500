@@ -22,7 +22,7 @@ export default function RecipeDetail() {
         const fetchRecipes = async () => {
             try {
                 const response = await fetch(`${config.server_host}/recipe_info_name/?recipe_name=` +
-                    encodeURIComponent(name).replace(/_/g, '%20').replace(/'/g, '%27'));
+                    encodeURIComponent(name));
                 const data = await response.json();
                 setRecipe(data[0]);
                 console.log(data[0]);

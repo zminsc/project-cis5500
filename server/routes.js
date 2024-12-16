@@ -1,17 +1,17 @@
 const { Pool, types } = require('pg');
-const config = require('./config.json')
+require('dotenv').config();
 
 // Override the default parsing for BIGINT (PostgreSQL type ID 20)
 types.setTypeParser(20, val => parseInt(val, 10)); //DO NOT DELETE THIS
 
-// Create PostgreSQL connection using database credentials provided in config.json
-// Do not edit. If the connection fails, make sure to check that config.json is filled out correctly
+// Create PostgreSQL connection using database credentials provided in .env 
+// Do not edit. If the connection fails, make sure to check that .env is filled out correctly
 const connection = new Pool({
-  host: config.rds_host,
-  user: config.rds_user,
-  password: config.rds_password,
-  port: config.rds_port,
-  database: config.rds_db,
+  host: process.env.RDS_HOST,
+  user: process.env.RDS_USER,
+  password: process.env.RDS_PASSWORD,
+  port: process.env.RDS_PORT,
+  database: process.env.RDS_DB,
   ssl: {
     rejectUnauthorized: false,
   },

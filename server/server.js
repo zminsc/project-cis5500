@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const config = require('./config');
 const routes = require('./routes');
+require('dotenv').config();
 
 const app = express();
 
@@ -10,8 +10,8 @@ const app = express();
 app.use(cors({ origin: '*' }));
 
 
-app.listen(config.server_port, () => {
-  console.log(`Server running at http://${config.server_host}:${config.server_port}/`);
+app.listen(process.env.SERVER_PORT, () => {
+  console.log(`Server running at http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/`);
 });
 
 

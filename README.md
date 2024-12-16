@@ -17,6 +17,12 @@ The processed data used in this project is stored on Google Drive. You can acces
 
 [Google Drive link](https://drive.google.com/drive/folders/1rS8oRWQUtCirKmpbK9f0vawsXbVr8rx3?usp=drive_link)
 
+Data Source Link: https://www.kaggle.com/datasets/irkaal/foodcom-recipes-and-reviews
+
+Entity Resolution Process: https://colab.research.google.com/drive/1Dt8ceGYNXezPB01KXPHAlcfEQVL1Ye09#scrollTo=MNTQbcDCxd6a
+
+
+
 ### Project Goals: 
 
 College students often find themselves off the meal plan by their junior year, which can make it challenging to manage daily meals, especially for those not adept at cooking. Our app, Recipedia, addresses the need for an accessible, easy-to-use solution that helps students find, organize, and prepare meals based on their culinary skills, dietary preferences, and available ingredients. It aims to reduce the stress of meal planning and increase the variety and nutritional value of meals cooked by students by providing nutritional information as well. This robust dataset of recipes and nutritional information serves as a wonderful resource for students, and our website application facilitates easy use of this resource for students and other users.

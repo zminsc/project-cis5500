@@ -156,14 +156,15 @@ const ingredients_category = async function(req, res) {
 const recipes_protein = async function(req, res) {
 
   connection.query(`
-    SELECT 
-        r.name, 
-        n.protein_content, r.date_published, 
-              r.cook_time, r.prep_time, r.servings, r.image_url 
-    FROM recipes r
-    JOIN nutrition n ON r.id = n.recipe_id
-    ORDER BY n.protein_content DESC
-    LIMIT 10
+    WITH ranked_recipes AS (
+      SELECT r.name, n.protein_content, r.date_published, r.cook_time, r.prep_time, r.servings, r.image_url
+      FROM recipes r
+      JOIN nutrition n ON r.id = n.recipe_id
+      ORDER BY n.protein_content DESC
+    )
+    SELECT *
+    FROM ranked_recipes
+    LIMIT 10;
     `, (err, data) => {
     if (err) {
       console.log(err);

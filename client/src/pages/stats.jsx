@@ -17,7 +17,7 @@ export default function StatsPage() {
     const fetchRecipeCountsByCategory = async () => {
       try {
         const searchRoute = "recipe_count_category";
-        const url = `http://localhost:8080/${searchRoute}`;
+        const url = `${config.server_host}/${searchRoute}`;
         const response = await fetch(url);
         const data = await response.json();
         setRecipeCountsByCategory(data);
@@ -32,7 +32,7 @@ export default function StatsPage() {
   useEffect(() => {
     const fetchTopProteinRecipes = async () => {
       try {
-        const url = `http://localhost:8080/recipes_protein`;
+        const url = `${config.server_host}/recipes_protein`;
         const response = await fetch(url);
         const data = await response.json();
         setTopProteinRecipes(data);
@@ -46,7 +46,7 @@ export default function StatsPage() {
   const fetchAvgCaloriesByCategory = async (catName) => {
     setLoading(true); 
     try {
-      const url = `http://localhost:8080/avg_cal_category?cat_name=${catName}`;
+      const url = `${config.server_host}/avg_cal_category?cat_name=${catName}`;
       const response = await fetch(url);
       const data = await response.json();
       setAvgCaloriesByCategory(data[0]?.average_calories || null);

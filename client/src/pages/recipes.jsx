@@ -12,6 +12,7 @@ import {
   Divider
 } from "@nextui-org/react";
 import DataView from "../components/DataView";
+import config from "../config.json"
 
 const ROUTES = [
   {
@@ -99,7 +100,7 @@ export default function RecipesPage() {
         }
       });
 
-      const response = await fetch(`http://localhost:8080/${selectedRoute}?${params}`);
+      const response = await fetch(`${config.server_host}/${selectedRoute}?${params}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch recipes: ${response.statusText}`);
       }

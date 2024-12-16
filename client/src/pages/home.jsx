@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import GridItem from "../components/GridItem";
 import {Button, Spinner} from "@nextui-org/react";
 import {useNavigate} from "react-router-dom";
+import config from "../config.json"
 
 export default function HomePage() {
   const [recipes, setRecipes] = useState();
@@ -10,7 +11,9 @@ export default function HomePage() {
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const response = await fetch("http://localhost:8080/recipes/simplified?limit=9");
+        // console.log(config.server_host)
+        // console.log(config.server_port)
+        const response = await fetch(`${config.server_host}/recipes/simplified?limit=9`);
         const data = await response.json();
 
         setRecipes(data);

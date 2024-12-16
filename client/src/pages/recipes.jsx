@@ -35,7 +35,7 @@ const ROUTES = [
     label: "Quick Recipes",
     type: "recipe",
     parameters: [
-      { name: "cook_time", type: "slider", label: "Maximum Total Time (minutes)", min: 1, max: 120, step: 1, defaultValue: 0 }
+      { name: "cook_time", type: "slider", label: "Maximum Total Time (minutes)", min: 1, max: 120, step: 1, defaultValue: 1 }
     ]
   },
   {
